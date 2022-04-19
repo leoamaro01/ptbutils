@@ -1,0 +1,78 @@
+import pickle
+from xml.dom import UserDataHandler
+from telegram.ext import PicklePersistence
+from telegram.ext.utils.types import BD
+from pcloud import PyCloud
+
+
+class PCloudPersistence(PicklePersistence):
+    def __init__(
+        self,
+        pcloud_user: str,
+        pcloud_password: str,
+        folder_id: int = 15243,
+        folder_name: str = "persistencedata",
+        bot_data_file_name: str = "bot.data",
+        chat_data_file_name: str = "chat.data",
+        user_data_file_name: str = "user.data",
+        store_user_data: bool = True,
+        store_chat_data: bool = True,
+        store_bot_data: bool = True,
+        store_callback_data: bool = False,
+    ):
+        self.user = pcloud_user
+        self.password = pcloud_password
+        self.folderID = folder_id
+        self.folderName = folder_name
+        self.store_user_data = store_user_data
+        self.store_chat_data = store_chat_data
+        self.store_bot_data = store_bot_data
+        self.store_callback_data = store_callback_data
+
+        self.cloud = PyCloud(pcloud_user, pcloud_password)
+        self.cloud.createfolderifnotexists(
+            folderid=folder_id,
+            name=folder_name,
+        )
+        if store_bot_data:
+            self.bot_data = PCloudPersistence.download_or_create_data(
+                self.cloud, folder_id, bot_data_file_name
+            )
+
+        if store_chat_data:
+            self.chat_data = PCloudPersistence.download_or_create_data(
+                self.cloud, folder_id, chat_data_file_name
+            )
+
+        if store_user_data:
+            self.user_data = PCloudPersistence.download_or_create_data(
+                self.cloud, folder_id, user_data_file_name
+            )
+
+    def download_or_create_data(cloud: PyCloud, folder_id: int, filename: str) -> dict:
+        from os import remove
+
+        cloud.file_open(
+            flags=0x0040,
+            folderid=folder_id,
+            name=filename,
+        )
+        file_size = cloud.file_size(fd=-1)
+        if file_size == 0:
+            return {}
+        else:
+            file_data = cloud.file_read(fd=-1, count=file_size)
+            temp_name = filename + ".temp"
+            with open(temp_name, "wb") as f:
+                f.write(file_data)
+
+            f = open(temp_name, "r")
+            data = pickle.load(f)
+            f.close()
+
+            remove(temp_name)
+
+            return data
+
+    def get_bot_data(self) -> BD:
+        return self.bot_data

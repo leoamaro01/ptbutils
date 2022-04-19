@@ -1,0 +1,28 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<menu name="responsibility_menu" formats="name,responsible,responsibilizer">
+    <text>
+        This is
+        &lt;b&gt;{responsible}'s&lt;/b&gt;
+        responsibility, {name}!
+    </text>
+    <buttons>
+        <button>
+            <text>
+                Ok, {responsibilizer}, whatever...
+            </text>
+            <callback menu_link="receive_slap_menu" />
+        </button>
+        <button>
+            <text>
+                &lt;i&gt;Accepts graciously&lt;/i&gt;
+            </text>
+            <callback function="responses.run" />
+        </button>
+        <button>
+            <text>
+                Custom answer
+            </text>
+            <callback prompt_link="say_anything_prompt" />
+        </button>
+    </buttons>
+</menu>

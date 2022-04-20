@@ -9,7 +9,7 @@ class BotPrompt:
         text: str,
         callback: Callable[[Update, CallbackContext], None],
         validator: Callable[[Update, CallbackContext], bool] = None,
-        on_cancel: Callable[[Update, CallbackContext], bool] = None,
+        on_cancel: Callable[[Update, CallbackContext], None] = None,
         cancel_button_text: str = None,
         resize_keyboard: bool = True,
         **kwargs

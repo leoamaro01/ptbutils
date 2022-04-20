@@ -6,13 +6,13 @@
         responsibility, {name}!
     </text>
     <buttons>
-        <button>
+        <button row="0">
             <text>
                 Ok, {responsibilizer}, whatever...
             </text>
             <callback menu_link="receive_slap_menu" />
         </button>
-        <button>
+        <button row="0">
             <text>
                 &lt;i&gt;Accepts graciously&lt;/i&gt;
             </text>

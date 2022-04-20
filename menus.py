@@ -72,7 +72,7 @@ def menu_listener(update: Update, context: CallbackContext):
         return
 
     text = update.message.text
-    if not text in menu_callbacks:
+    if text not in menu_callbacks:
         return
 
     callback = menu_callbacks[text]

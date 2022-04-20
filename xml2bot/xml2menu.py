@@ -1,6 +1,6 @@
 from typing import Callable, Optional
 import untangle
-from telegram import KeyboardButton, Update
+from telegram import Update
 from telegram.ext import CallbackContext
 from tools._utility_functions import _func_path_to_callable
 
@@ -18,6 +18,16 @@ class XMLMenu:
         self.formats = formats
         self.buttons = buttons
 
+    def __str__(self) -> str:
+        return str(
+            {
+                "name": self.name,
+                "text": self.text,
+                "formats": self.formats,
+                "buttons": str(self.buttons),
+            }
+        )
+
 
 class XMLMenuButton:
     def __init__(
@@ -33,6 +43,17 @@ class XMLMenuButton:
         self.callback_function = callback_function
         self.prompt_link = prompt_link
         self.menu_link = menu_link
+
+    def __str__(self) -> str:
+        return str(
+            {
+                "text": self.text,
+                "row": self.row,
+                "function": self.callback_function,
+                "prompt": self.prompt_link,
+                "menu": self.menu_link,
+            }
+        )
 
 
 def xml2menu(xml: str) -> XMLMenu:

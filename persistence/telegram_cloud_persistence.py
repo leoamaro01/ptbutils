@@ -42,7 +42,7 @@ class TelegramCloudPersistence(BasePersistence):
             self.chat_data: DefaultDict[int, CD] = {}
             self.user_data: DefaultDict[int, UD] = {}
 
-    def schedule_upload(self, time: int):
+    def schedule_upload(self, time: float):
         if self.upload_scheduled:
             return
 

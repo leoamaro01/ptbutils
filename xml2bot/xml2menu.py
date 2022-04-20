@@ -2,7 +2,7 @@ from typing import Callable, Optional
 import untangle
 from telegram import Update
 from telegram.ext import CallbackContext
-from ..tools import _func_path_to_callable
+from tools._utility_functions import _func_path_to_callable
 
 
 class XMLMenu:

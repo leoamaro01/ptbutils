@@ -24,7 +24,7 @@ class XMLMenu:
                 "name": self.name,
                 "text": self.text,
                 "formats": self.formats,
-                "buttons": str(self.buttons),
+                "buttons": str([str(button) for button in self.buttons]),
             }
         )
 
@@ -74,7 +74,7 @@ def xml2menu(xml: str) -> XMLMenu:
             int(button.get_attribute("row")) if button.get_attribute("row") else -1,
             (
                 _func_path_to_callable(button.callback.get_attribute("function"))
-                if button.callback.get_attribut("function")
+                if button.callback.get_attribute("function")
                 else None
             ),
             button.callback.get_attribute("prompt_link"),

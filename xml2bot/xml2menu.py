@@ -1,3 +1,4 @@
+from argparse import ArgumentError
 from typing import Callable, Optional
 import untangle
 from telegram import Update
@@ -38,6 +39,9 @@ class XMLMenuButton:
         prompt_link: Optional[str] = None,
         menu_link: Optional[str] = None,
     ) -> None:
+        if not callback_function and not prompt_link and not menu_link:
+            raise ArgumentError(message="No callback provided")
+
         self.text = text
         self.row = row if row >= 0 else -1
         self.callback_function = callback_function

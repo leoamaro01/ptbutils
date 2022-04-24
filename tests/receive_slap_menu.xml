@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu name="receive_slap_menu">
+    <text>You have been slaped!</text>
+    <buttons>
+        <button>
+            <text>Auch!</text>
+            <callback function="responses.say_ouch" />
+        </button>
+    </buttons>
+</menu>

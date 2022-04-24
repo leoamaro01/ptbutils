@@ -67,11 +67,10 @@ def xml2menu(xml: str) -> XMLMenu:
     menu_name = root["name"]
     formats = root.get_attribute("formats")
     menu_formats = formats.split(",") if formats else None
-    menu_text = root.text.cdata
-
+    menu_text = root.text.cdata.strip("\n ")
     buttons = [
         XMLMenuButton(
-            button.text.cdata,
+            button.text.cdata.strip("\n "),
             int(button.get_attribute("row")) if button.get_attribute("row") else -1,
             (
                 _func_path_to_callable(button.callback.get_attribute("function"))

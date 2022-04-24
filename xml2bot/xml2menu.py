@@ -34,7 +34,7 @@ class XMLMenuButton:
     def __init__(
         self,
         text: str,
-        row: int,
+        row: Optional[int] = None,
         callback_function: Optional[Callable[[Update, CallbackContext], None]] = None,
         prompt_link: Optional[str] = None,
         menu_link: Optional[str] = None,
@@ -43,7 +43,7 @@ class XMLMenuButton:
             raise ArgumentError(message="No callback provided")
 
         self.text = text
-        self.row = row if row >= 0 else -1
+        self.row = row if row is not None and row >= 0 else -1
         self.callback_function = callback_function
         self.prompt_link = prompt_link
         self.menu_link = menu_link

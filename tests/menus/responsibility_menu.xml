@@ -21,6 +21,7 @@
         <button>
             <text>
                 Custom answer
+                Whatever...
             </text>
             <callback prompt_link="say_anything_prompt" />
         </button>

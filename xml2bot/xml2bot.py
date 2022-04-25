@@ -1,10 +1,10 @@
-from ctypes import resize
-from typing import Callable, Optional, Union
-from telegram import Chat, ReplyKeyboardMarkup, Update
-from telegram.ext import CallbackContext, Dispatcher, MessageHandler, Filters
-from menus import BotMenu, menu_listener, send_menu
-from prompts import BotPrompt, prompt_listener, send_prompt
-from tools._utility_functions import _func_path_to_callable
+from typing import Callable, Union
+
+from menus import BotMenu, menu_listener
+from prompts import BotPrompt, prompt_listener
+from telegram import ReplyKeyboardMarkup
+from telegram.ext import Dispatcher, Filters, MessageHandler
+
 from xml2menu import XMLMenu, xml2menu
 from xml2prompt import XMLPrompt, xml2prompt
 

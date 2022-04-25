@@ -1,4 +1,5 @@
 from argparse import ArgumentError
+from multiprocessing import reduction
 from typing import Callable, Optional
 import untangle
 from telegram import Update
@@ -18,6 +19,32 @@ class XMLMenu:
         self.text = text
         self.formats = formats
         self.buttons = buttons
+
+    def __eq__(self, __o: object) -> bool:
+        try:
+            if self.buttons:
+                l = len(self.buttons)
+                if l != len(__o.buttons):
+                    return False
+                for i in range(l):
+                    if self.buttons[i] != __o.buttons[i]:
+                        return False
+            elif __o.buttons:
+                return False
+
+            if self.formats:
+                l = len(self.formats)
+                if l != len(__o.formats):
+                    return False
+                for i in range(l):
+                    if self.formats[i] != __o.formats[i]:
+                        return False
+            elif __o.formats:
+                return False
+
+            return self.name == __o.name and self.text == __o.text
+        except:
+            return False
 
     def __str__(self) -> str:
         return str(
@@ -48,6 +75,18 @@ class XMLMenuButton:
         self.prompt_link = prompt_link
         self.menu_link = menu_link
 
+    def __eq__(self, __o: object) -> bool:
+        try:
+            return (
+                self.text == __o.text
+                and self.row == __o.row
+                and self.callback_function == __o.callback_function
+                and self.prompt_link == __o.prompt_link
+                and self.menu_link == __o.menu_link
+            )
+        except:
+            return False
+
     def __str__(self) -> str:
         return str(
             {
@@ -71,10 +110,13 @@ def xml2menu(xml: str) -> XMLMenu:
     menu_name = root["name"]
     formats = root.get_attribute("formats")
     menu_formats = formats.split(",") if formats else None
-    menu_text = root.text.cdata.strip("\n ")
+    raw_menu_text = root.text.cdata.strip("\n ")
+    menu_text = "\n".join([l.strip("\n ") for l in raw_menu_text.splitlines()])
     buttons = [
         XMLMenuButton(
-            button.text.cdata.strip("\n "),
+            "\n".join(
+                [l.strip("\n ") for l in button.text.cdata.strip("\n ").splitlines()]
+            ),
             int(button.get_attribute("row")) if button.get_attribute("row") else -1,
             (
                 _func_path_to_callable(button.callback.get_attribute("function"))

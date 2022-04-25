@@ -36,7 +36,8 @@ def xml2prompt(xml: str) -> XMLPrompt:
     prompt_name = root["name"]
     formats = root.get_attribute("formats")
     prompt_formats = formats.split(",") if formats else None
-    prompt_text = root.text.cdata.strip("\n ")
+    raw_prompt_text = root.text.cdata.strip("\n ")
+    prompt_text = "\n".join([l.strip("\n ") for l in raw_prompt_text.splitlines()])
 
     v_attr = root.validator.get_attribute("function")
     prompt_validator = _func_path_to_callable(v_attr) if v_attr else None
@@ -45,7 +46,10 @@ def xml2prompt(xml: str) -> XMLPrompt:
     prompt_callback = _func_path_to_callable(c_attr) if c_attr else None
 
     try:
-        prompt_cancel_text = root.cancel.text.cdata.strip("\n ")
+        raw_cancel_text = root.cancel.text.cdata.strip("\n ")
+        prompt_cancel_text = "\n".join(
+            [l.strip("\n ") for l in raw_cancel_text.splitlines()]
+        )
         prompt_cancel_callback = _func_path_to_callable(
             root.cancel.callback["function"]
         )

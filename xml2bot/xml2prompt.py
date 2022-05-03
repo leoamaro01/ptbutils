@@ -24,6 +24,29 @@ class XMLPrompt:
         self.cancel_text = cancel_text
         self.cancel_callback = cancel_callback
 
+    def __eq__(self, __o: object) -> bool:
+        try:
+            assert (
+                self.name == __o.name
+                and self.text == __o.text
+                and self.validator == __o.validator
+                and self.callback == __o.callback
+                and self.cancel_text == __o.cancel_text
+                and self.cancel_callback == __o.cancel_callback
+                and (
+                    (self.formats and __o.formats)
+                    or (not self.formats and not __o.formats)
+                )
+            )
+
+            l = len(self.formats)
+            assert l == len(__o.formats)
+
+            for i in range(l):
+                assert self.formats[i] == __o.formats[i]
+        except AttributeError or AssertionError:
+            return False
+
 
 def xml2prompt(xml: str) -> XMLPrompt:
     prompt_xml = untangle.parse(xml)

@@ -32,7 +32,6 @@ class XMLMenu:
                         return False
             elif __o.buttons:
                 return False
-
             if self.formats:
                 l = len(self.formats)
                 if l != len(__o.formats):
@@ -44,18 +43,8 @@ class XMLMenu:
                 return False
 
             return self.name == __o.name and self.text == __o.text
-        except:
+        except AttributeError or IndexError:
             return False
-
-    def __str__(self) -> str:
-        return str(
-            {
-                "name": self.name,
-                "text": self.text,
-                "formats": self.formats,
-                "buttons": str([str(button) for button in self.buttons]),
-            }
-        )
 
 
 class XMLMenuButton:
@@ -87,17 +76,6 @@ class XMLMenuButton:
             )
         except:
             return False
-
-    def __str__(self) -> str:
-        return str(
-            {
-                "text": self.text,
-                "row": self.row,
-                "function": self.callback_function,
-                "prompt": self.prompt_link,
-                "menu": self.menu_link,
-            }
-        )
 
 
 def xml2menu(xml: str, **kwargs) -> XMLMenu:

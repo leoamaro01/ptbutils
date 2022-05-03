@@ -1,4 +1,5 @@
 import sys, os
+from xml2bot.xml2menu import xml2menu
 
 current_dir = sys.path[0]
 parent = os.path.dirname(current_dir)
@@ -24,6 +25,8 @@ def test_xml2prompt():
     </cancel>
 </prompt>"""
     )
+    print(str(prompt))
+
     assert prompt == XMLPrompt(
         name="say_anything",
         formats=["sayer"],

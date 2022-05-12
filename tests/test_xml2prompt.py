@@ -1,33 +1,21 @@
 import sys, os
-from xml2bot.xml2menu import xml2menu
 
-current_dir = sys.path[0]
+current_dir = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current_dir)
+
 sys.path.append(parent)
 
-from xml2bot.xml2prompt import xml2prompt, XMLPrompt
+import xml2bot.xml2prompt as xml2prompt
 
 
 def test_xml2prompt():
     import prompt_functions, prompt_validators
 
-    prompt = xml2prompt(
-        """<?xml version="1.0" encoding="UTF-8"?>
-<prompt name="say_anything" formats="sayer">
-    <text>What would you like to say, {sayer}?</text>
-    <validator function="prompt_validators.always_true" />
-    <callback function="prompt_functions.echo_that_shit" />
-    <cancel>
-        <text>
-            Cancel!!!
-        </text>
-        <callback function="prompt_functions.get_slapped_again" />
-    </cancel>
-</prompt>"""
+    prompt = xml2prompt.parse_prompt(
+        os.path.join(current_dir, "prompts/say_anything_prompt.xml")
     )
-    print(str(prompt))
 
-    assert prompt == XMLPrompt(
+    comparable = xml2prompt.XMLPrompt(
         name="say_anything",
         formats=["sayer"],
         text="What would you like to say, {sayer}?",
@@ -36,3 +24,8 @@ def test_xml2prompt():
         cancel_text="Cancel!!!",
         cancel_callback=prompt_functions.get_slapped_again,
     )
+
+    print(prompt.__dict__)
+    print(comparable.__dict__)
+
+    assert prompt == comparable

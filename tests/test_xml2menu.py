@@ -1,6 +1,6 @@
 import sys, os
 
-current_dir = sys.path[0]
+current_dir = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current_dir)
 sys.path.append(parent)
 
@@ -10,7 +10,9 @@ import xml2bot.xml2menu as xml2menu
 def test_complex_case():
     import responses
 
-    menu = xml2menu.xml2menu(os.path.join(current_dir, "menus/responsibility_menu.xml"))
+    menu = xml2menu.parse_menu(
+        os.path.join(current_dir, "menus/responsibility_menu.xml")
+    )
     assert menu == xml2menu.XMLMenu(
         name="responsibility_menu",
         formats=["name", "responsible", "responsibilizer"],

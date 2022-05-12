@@ -5,8 +5,8 @@ from prompts import BotPrompt, prompt_listener
 from telegram import ReplyKeyboardMarkup
 from telegram.ext import Dispatcher, Filters, MessageHandler
 
-from xml2menu import XMLMenu, xml2menu
-from xml2prompt import XMLPrompt, xml2prompt
+from xml2menu import XMLMenu, parse_menu
+from xml2prompt import XMLPrompt, parse_prompt
 
 
 class XMLBot:
@@ -28,7 +28,7 @@ class XMLBot:
         try:
             files = [file for file in os.listdir(menus_path) if file.endswith(".xml")]
             for file in files:
-                menu = xml2menu(file)
+                menu = parse_menu(file)
                 self.menus[menu.name] = menu
         except OSError:
             pass
@@ -36,7 +36,7 @@ class XMLBot:
         try:
             files = [file for file in os.listdir(prompts_path) if file.endswith(".xml")]
             for file in files:
-                prompt = xml2prompt(file)
+                prompt = parse_prompt(file)
                 self.prompts[prompt.name] = prompt
         except OSError:
             pass

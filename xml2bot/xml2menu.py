@@ -1,5 +1,4 @@
 from argparse import ArgumentError
-from inspect import Attribute
 from typing import Callable, Optional
 import untangle
 from telegram import Update
@@ -78,7 +77,7 @@ class XMLMenuButton:
             return False
 
 
-def xml2menu(xml: str, **kwargs) -> XMLMenu:
+def parse_menu(xml: str, **kwargs) -> XMLMenu:
     menu_xml = untangle.parse(xml)
 
     try:
@@ -96,26 +95,23 @@ def xml2menu(xml: str, **kwargs) -> XMLMenu:
             raise MenuParseError(
                 xml,
                 "No name provided for the menu."
-                'Tip: You can provide a menu through the "name" attribute'
+                'Tip: You can provide a name through the "name" attribute'
                 "in the menu tag or as a keyword argument for this method.",
             )
+
     formats = root.get_attribute("formats")
     menu_formats = formats.split(",") if formats else None
     try:
         raw_menu_text = root.text.cdata.strip("\n ")
         menu_text = "\n".join([l.strip("\n ") for l in raw_menu_text.splitlines()])
     except AttributeError:
-        raise MenuParseError(
-            xml, 'A menu must contain a "text" element for it to be valid.'
-        )
+        raise MenuParseError(xml, 'A menu must contain a "text" element.')
 
     buttons = []
     try:
         button_elements = root.buttons.get_elements("button")
     except AttributeError:
-        raise MenuParseError(
-            xml, 'A menu must contain a "buttons" element for it to be valid.'
-        )
+        raise MenuParseError(xml, 'A menu must contain a "buttons" element.')
 
     if not button_elements:
         raise MenuParseError(xml, "A menu can't be defined without buttons.")

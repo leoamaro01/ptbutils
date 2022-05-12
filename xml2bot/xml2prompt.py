@@ -3,6 +3,7 @@ from telegram import Update
 import untangle
 from telegram.ext import CallbackContext
 from tools._utility_functions import _func_path_to_callable
+from errors import PromptParseError
 
 
 class XMLPrompt:
@@ -33,22 +34,26 @@ class XMLPrompt:
                 and self.callback == __o.callback
                 and self.cancel_text == __o.cancel_text
                 and self.cancel_callback == __o.cancel_callback
-                and (
-                    (self.formats and __o.formats)
-                    or (not self.formats and not __o.formats)
-                )
             )
 
-            l = len(self.formats)
-            assert l == len(__o.formats)
+            if self.formats:
+                if not __o.formats:
+                    return False
 
-            for i in range(l):
-                assert self.formats[i] == __o.formats[i]
+                l = len(self.formats)
+                assert l == len(__o.formats)
+
+                for i in range(l):
+                    assert self.formats[i] == __o.formats[i]
+            elif __o.formats:
+                return False
         except AttributeError or AssertionError:
             return False
 
+        return True
 
-def xml2prompt(xml: str) -> XMLPrompt:
+
+def parse_prompt(xml: str, **kwargs) -> XMLPrompt:
     prompt_xml = untangle.parse(xml)
 
     try:
@@ -56,11 +61,26 @@ def xml2prompt(xml: str) -> XMLPrompt:
     except:
         raise ValueError("The XML isn't a prompt. The root tag must be a 'prompt' tag.")
 
-    prompt_name = root["name"]
+    prompt_name = root.get_attribute("name")
+    if not prompt_name:
+        if "name" in kwargs:
+            prompt_name = kwargs["name"]
+        else:
+            raise PromptParseError(
+                xml,
+                "No name provided for the prompt."
+                'Tip: You can provide a name through the "name" attribute'
+                "in the prompt tag or as a keyword argument for this method.",
+            )
+
     formats = root.get_attribute("formats")
     prompt_formats = formats.split(",") if formats else None
-    raw_prompt_text = root.text.cdata.strip("\n ")
-    prompt_text = "\n".join([l.strip("\n ") for l in raw_prompt_text.splitlines()])
+
+    try:
+        raw_prompt_text = root.text.cdata.strip("\n ")
+        prompt_text = "\n".join([l.strip("\n ") for l in raw_prompt_text.splitlines()])
+    except AttributeError:
+        raise PromptParseError(xml, 'A prompt must contain a "text" element.')
 
     v_attr = root.validator.get_attribute("function")
     prompt_validator = _func_path_to_callable(v_attr) if v_attr else None
@@ -76,7 +96,7 @@ def xml2prompt(xml: str) -> XMLPrompt:
         prompt_cancel_callback = _func_path_to_callable(
             root.cancel.callback["function"]
         )
-    except:
+    except AttributeError:
         prompt_cancel_text = None
         prompt_cancel_callback = None
 
